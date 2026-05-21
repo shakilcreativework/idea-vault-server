@@ -31,6 +31,7 @@ async function run() {
     // ----------- server db code start --------------
     const db = client.db("ideavaultDB");
     const ideaCollection = db.collection("ideas");
+    const commentCollection = db.collection("comment");
 
     // get
     app.get("/add-ideas", async (req, res) => {
@@ -47,6 +48,13 @@ async function run() {
       const result = await ideaCollection.findOne(query);
 
       res.send(result);
+    });
+
+    // comment read
+    app.get('/comments', async(req, res) => {
+      const result = await commentCollection.find().toArray();
+      console.log(result);
+      res.json(result);
     });
 
     // Get ideas by user email
@@ -77,6 +85,20 @@ async function run() {
       };
       console.log(newData);
       const result = await ideaCollection.insertOne(newData);
+      res.json(result);
+    });
+
+    // comments
+    app.post('/comments', async(req, res) => {
+      const commentData = req.body;
+
+      const newComment = {
+        ...commentData,
+        createdAt: new Date(),
+      }
+
+      console.log(newComment);
+      const result = await commentCollection.insertOne(newComment);
       res.json(result);
     });
 
