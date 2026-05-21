@@ -36,7 +36,7 @@ async function run() {
     // get
     app.get("/add-ideas", async (req, res) => {
       const result = await ideaCollection.find().toArray();
-      console.log(result);
+      // console.log(result);
       res.json(result);
     });
 
@@ -51,14 +51,23 @@ async function run() {
     });
 
     // comment read
-    app.get('/comments', async(req, res) => {
+    app.get("/comments", async (req, res) => {
       const result = await commentCollection.find().toArray();
-      console.log(result);
+      // console.log(result);
+      res.json(result);
+    });
+
+    // Get comments by ideaId
+    app.get("/comments/:ideaId", async (req, res) => {
+      const ideaId = req.params.ideaId;
+      const query = { ideaId };
+      const result = await commentCollection.find(query).toArray();
+      // console.log(result);
       res.json(result);
     });
 
     // Get ideas by user email
-    app.get("/add-ideas", async(req, res) => {
+    app.get("/add-ideas", async (req, res) => {
       const email = req.query.email;
       let query = {};
 
@@ -83,26 +92,47 @@ async function run() {
         ...ideaData,
         createdAt: new Date(),
       };
-      console.log(newData);
+      // console.log(newData);
       const result = await ideaCollection.insertOne(newData);
       res.json(result);
     });
 
     // comments
-    app.post('/comments', async(req, res) => {
+    app.post("/comments", async (req, res) => {
       const commentData = req.body;
 
       const newComment = {
         ...commentData,
         createdAt: new Date(),
-      }
+      };
 
-      console.log(newComment);
+      // console.log(newComment);
       const result = await commentCollection.insertOne(newComment);
       res.json(result);
     });
 
     // update and patch
+    app.patch("/add-ideas/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const updatedData = req.body;
+
+      const filter = {
+        _id: new ObjectId(id),
+      };
+
+      const updatedDoc = {
+        $set: {
+          ...updatedData,
+          updatedAt: new Date(),
+        },
+      };
+
+      const result = await ideaCollection.updateOne(filter, updatedDoc);
+      console.log(result);
+      res.send(result);
+    });
+
 
     // delete
     // ----------- server db code ends ---------------
