@@ -128,13 +128,22 @@ async function run() {
         },
       };
 
+
+
       const result = await ideaCollection.updateOne(filter, updatedDoc);
-      console.log(result);
+      // console.log(result);
       res.send(result);
     });
 
 
     // delete
+    app.delete(('/add-ideas/:id'), async(req, res) => {
+      const id = req.params.id;
+      const result = await ideaCollection.deleteOne({_id: new ObjectId(id)});
+      console.log(result);
+      res.json(result);
+    });
+
     // ----------- server db code ends ---------------
     await client.db("admin").command({ ping: 1 });
     console.log(
